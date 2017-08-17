@@ -1,5 +1,4 @@
 '''Catch-all repo for helpful functions'''
-from numpy import isnan
 
 DYNAMO_TYPE_MAP = {str: 'S', float: 'N', int: 'N', type(None): 'S'}
 
@@ -9,8 +8,8 @@ def format_python_dict_for_dynamo(python_dict):
     output_payload = {}
     for key, value in python_dict.items():
         try:
-            if isnan(value):
-                value = None
+            if not value:
+                continue
         except TypeError:
             pass
         try:
@@ -21,3 +20,9 @@ def format_python_dict_for_dynamo(python_dict):
         else:
             output_payload[str(key)] = {DYNAMO_TYPE_MAP[type(value)]: str(value)}
     return output_payload
+
+def parse_config_section_to_dict(config, section):
+    output_dict = {}
+    for key, value in config[section].items():
+        output_dict[key] = value
+    return output_dict
